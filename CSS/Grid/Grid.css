@@ -7,9 +7,9 @@
     display: grid;
     /* grid-template-columns: repeat(2, 100px);
     grid-template-rows: repeat(1, 100px); */
-
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 2fr 1fr;
+    grid-template-columns: repeat( auto-fill, minmax(200px,500px));
+    /* grid-template-columns: repeat( auto-fit, minmax(200px,50px)); */
+    grid-template-rows: repeat(4, 200px);
     gap: 10px;
     background-color: lightblue;
     padding: 10px;
