@@ -1,0 +1,36 @@
+.container {
+    /* border: 2px solid red; */
+    margin-bottom: 20px;
+}
+
+.grid {
+    display: grid;
+    /* grid-template-columns: repeat(2, 100px);
+    grid-template-rows: repeat(1, 100px); */
+
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 2fr 1fr;
+    gap: 10px;
+    background-color: lightblue;
+    padding: 10px;
+}
+
+.inline-grid {
+    display: inline-grid;
+    /* grid-template-columns: repeat(2, 100px); */
+    /* grid-template-rows: repeat(1, 100px); */
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+    
+    
+    gap: 10px;
+    background-color: lightgreen;
+    padding: 10px;
+}
+
+.item {
+    background-color: coral;
+    text-align: center;
+    line-height: 50px;
+    border: 1px solid black;
+}
