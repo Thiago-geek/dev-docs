@@ -123,3 +123,229 @@ console.log(jsx);
 ```
 
 React se encargará internamente de trabajar con ese objeto por nosotros y añadirlo al HTML real de la página, de modo que nosotros solo nos tengamos que preocupar del código que escribimos en el editor.
+
+# [**HTML vs JSX**](https://lenguajejs.com/react/componentes/jsx/#html-vs-jsx)
+
+Aunque pueda parecerlo, JSX no es 100% compatible con HTML, y tiene sus propias normas. Además, JSX permite evaluar código Javascript y devolverlo evaluado, lo que hace que sea mucho más cómodo a la hora de trabajar.
+
+La idea es que con React podamos trabajar con lógica de programación y estructuras de datos en Javascript antes del **`return`**, y luego al devolver la información, se devuelva el código JSX para construir el HTML.
+
+En cierta forma, la forma de pensar al trabajar con React es **crear funciones que devuelven código JSX, y que se utilizarán como si fueran una etiqueta HTML**. Veamos ahora un ejemplo donde un código HTML correcto no funcionaría en React:
+
+```jsx
+export function App() {
+  /* Aquí iría nuestra lógica Javascript */
+  return (
+    <div>
+      <p>¡Hola, Manz! <br> ¿Qué tal estás?</p>
+    </div>
+  );
+}
+```
+
+Este fragmento de código tiene una etiqueta HTML **`<br>`** que no requiere cierre. Esto en HTML es correcto, sin embargo, React te dará error ya que **se espera que todas las etiquetas HTML se cierren**. Hay dos formas de solucionarlo en React:
+
+- 1️⃣ Escribir una etiqueta de cierre **`</br>`**. ❌ Correcto en React pero incorrecto en HTML puro.
+- 2️⃣ «Autocerrar» la etiqueta sin cierre **`<br />`**. ✅ Válida en HTML (***heredado de XHTML***).
+
+Lo mismo ocurre con otras etiquetas HTML que no requieren cierre como **`<img>`**, **`<hr>`**, **`<meta>`**, **`<link>`**, **`<input>`**, **`<source>`**, **`<track>`**, **`<base>`**, etc.
+
+> Observa que cuando tenemos fragmentos JSX muy extensos, de forma opcional se puede envolver todo en paréntesis para mejorar la legibilidad.
+> 
+
+# [**Javascript en JSX**](https://lenguajejs.com/react/componentes/jsx/#javascript-en-jsx)
+
+La **sintaxis JSX** es inteligente y nos permite añadir código Javascript de múltiples formas, adaptándose automáticamente. Dos ejemplos de ello:
+
+- El **`name`** lo insertamos literalmente en el párrafo **`<p>`**, por lo que se genera como texto.
+- El **`styles`** contiene varias propiedades CSS. JSX es lo suficientemente inteligente para entender que lo estamos asociando a [estilos en linea](https://lenguajecss.com/cascada-css/estructura/inline-styles/), por lo que lo convierte al formato que necesita por nosotros:
+
+```jsx
+export function App() {
+  const name = "Manz";
+  const styles = {
+    background: "indigo",
+    color: "white",
+    padding: "5px 15px"
+  };
+
+  return (<div style={styles}>
+    <p>¡Hola, {name}!</p>
+  </div>);
+}
+```
+
+```html
+<!-- Código HTML generado -->
+<div style="background:indigo;color:white;padding:5px 15px"><p>¡Hola, Manz!</p></div>
+```
+
+> **Cuidado**: Esta no es la forma adecuada de manejar estilos en React. Es sólo un ejemplo. Más adelante veremos formas adecuadas de gestionar los estilos CSS desde React.
+> 
+
+# [**Eventos JSX**](https://lenguajejs.com/react/componentes/jsx/#eventos-jsx)
+
+Al estar utilizando Javascript junto a nuestro JSX, podemos utilizar toda la potencia de Javascript para generar nuestro HTML, y no estamos limitados a hacer algo estático. Podemos interpolar variables, usar condicionales, funciones dentro de nuestra función, bucles, eventos, etc.
+
+> React tiene una limitación en JSX, y es que siempre debe haber un elemento padre, no pueden existir varios.
+> 
+
+# [**Fragmentos JSX**](https://lenguajejs.com/react/componentes/jsx/#fragmentos-jsx)
+
+Es posible, que en el caso del ejemplo anterior, no queramos utilizar un elemento **`<div>`** padre porque no queremos añadir contenedores innecesarios al DOM, o porque nos complicaría el diseño CSS. En lugar de utilizar **`<div>`** podemos utilizar **fragmentos JSX**:
+
+jsx
+
+```jsx
+export function App() {
+  /* ... */
+
+  return (
+    <>
+      <button onClick={() => action("Manz")}>Click me, Manz!</button>
+      <button onClick={() => action("John")}>Click me, John!</button>
+    </>);
+}
+```
+
+Estos símbolos **`<>`** y **`</>`** generan un HTML más compacto, sin añadir ese elemento padre **`<div>`**.
+
+# [**Componentes funcionales**](https://lenguajejs.com/react/componentes/componentes-funcionales/)
+
+En React existen dos formas principales de crear componentes: los **componentes de clases** y los **componentes funcionales**. Aunque se pueden utilizar ambos, en la actualidad en el ecosistema de React se prefieren los componentes funcionales porque son mucho más sencillos y directos.
+
+# [**Ejemplos de componentes**](https://lenguajejs.com/react/componentes/componentes-funcionales/#ejemplos-de-componentes)
+
+## Componente Funcional
+
+Vamos a ver un ejemplo de componente muy sencillo utilizando ambas modalidades. Sin embargo, ten en cuenta que en el resto del tutorial vamos a utilizar los componentes funcionales, ya que son los que se han establecido como estándar en el ecosistema de React.
+
+Aquí tienes un componente funcional. Se basa en construir una función, escribir su lógica en el interior (***bucles, funciones, variables, etc...***) y devolver un código JSX, que se utilizará para construir el HTML del componente:
+
+```jsx
+function component() {
+  const name = "Manz";
+  return <h1>¡Hola, {name}!</h1>;
+}
+```
+
+Ten en cuenta que en JSX se utiliza la sintaxis **`{variable}`** y no la sintaxis **`${variable}`** que es la que se usa en los  en Javascript nativo. Ten siempre en cuenta cuál debes utilizar.
+
+## Componente de Clase
+
+En el caso de los componentes de clase, observa que creamos una clase que extiende de **`Component`** o de **`React.Component`**, una clase base de React. Luego, creamos un método **`render()`** que es el que se ejecuta automáticamente para generar el HTML del componente:
+
+```jsx
+class Component extends Component {
+  render() {
+    const name = "Manz";
+    return <h1>¡Hola, {name}!</h1>;
+  }
+}
+```
+
+En él, devolvemos el código JSX que buscamos. Este tipo de componentes aunque son mucho más potentes y versátiles, se pueden complicar dependiendo de la destreza del programador.
+
+Por esta razón, en el ecosistema de React se ha preferido apostar por los componentes funcionales, un modelo que reduce la barrera de conocimientos necesaria por parte del desarrollador, de modo que se puedan crear con una simple función.
+
+# [**Composición**](https://lenguajejs.com/react/componentes/componentes-funcionales/#composici%C3%B3n)
+
+Un aspecto fundamental en la programación es la **composición**. En React, es muy habitual utilizarla, de modo que debemos crear funciones (***componentes***) que se encarguen de funcionalidades específicas y si necesitamos realizar otras funcionalidades, creamos otro componente y el primero utiliza este último.
+
+Hemos creado la función **`WelcomeUser`** y la hemos colocado en otro fichero **`.jsx`** con dicho nombre. Desde nuestro **`App.jsx`** podemos importarla y utilizarla como si fuera una etiqueta HTML. De esta forma podemos reutilizar o usar componentes en otros componentes:
+
+```jsx
+import { WelcomeUser } from "./WelcomeUser.jsx";
+
+export function App() {
+  const title = `Mi Aplicación`;
+
+  return (
+    <>
+      <h1>{title}</h1>
+      <WelcomeUser />
+    </>);
+}
+```
+
+```jsx
+/* WelcomeUser.jsx */
+export function WelcomeUser() {
+  const user = "Manz";
+  return <h2>¡Hola, {user}!</h2>;
+}
+```
+
+Simplemente, la función **`WelcomeUser`** la movemos a otro fichero **`.jsx`** y le añadimos la palabra clave **`export`** al principio. De esta forma lo tendremos todo mejor organizado. Algunas consideraciones importantes:
+
+- 1️⃣ Crea siempre tus ficheros de React con extensiones **`.jsx`** y no **`.js`**.
+- 2️⃣ Aunque puedes usar **`export default`**, las exportaciones nombradas suelen ser más intuitivas.
+- 3️⃣ En general, se intenta que las funciones tengan nombres compuestos y en PascalCase.
+- 4️⃣ Como puedes ver, en React puedes «autocerrar» los componentes.
+
+En **React**, **PascalCase** es una convención de nomenclatura en la que cada palabra de un identificador comienza con una letra mayúscula, sin espacios ni guiones.
+
+> Recuerda que si el componente se va complicando, lo ideal es separar en varios componentes. Hazlo siempre que puedas reutilizar partes o quieras simplificar código y evitar que se complique.
+> 
+
+# [**Manejando eventos en JSX**](https://lenguajejs.com/react/componentes/eventos/)
+
+> En React **no se deben utilizar** los **`addEventListener()`**, ya que React posee estrategias alternativas más apropiadas que simplifican la gestión de eventos, haciéndola mucho más sencilla.
+> 
+
+# [**Eventos JSX en React**](https://lenguajejs.com/react/componentes/eventos/#eventos-jsx-en-react)
+
+Recordemos que en React no trabajamos directamente con HTML, sino que trabajamos con código JSX. En el ecosistema React se decidió crear una forma muy similar a como se controlan los eventos desde atributos HTML, pero con algunas diferencias, ya que utilizamos JSX.
+
+En la parte de JSX crearemos un atributo **`onClick`**, exactamente igual a como se hace en HTML. En su valor, y entre llaves de JSX indicaremos el nombre de la función que queremos ejecutar, y que habremos definido previamente en el interior de nuestro componente:
+
+jsx
+
+```jsx
+export function Button() {
+
+  const handleClick = () => {
+    alert("¡Has pulsado el botón!");
+  }
+
+  return <button onClick={handleClick}>¡Púlsame!</button>;
+}
+```
+
+Recuerda que puedes hacer esto con cualquier tipo de evento, simplemente añadiéndole **`on`** al nombre del evento y escribiéndolo en camelCase, al igual que se hace en HTML.
+
+# [**Eventos sintéticos**](https://lenguajejs.com/react/componentes/eventos/#eventos-sint%C3%A9ticos)
+
+¿Qué ocurre si queremos utilizar parámetros en nuestra función de gestión del evento? ¿O acceder a parámetros concretos como **`target`** o **`key`**? Veamos un ejemplo utilizando parámetros:
+
+- 1️⃣ En el caso de necesitar información del evento, añadimos un parámetro **`ev`**
+- 2️⃣ El segundo parámetro es nuestro dato, que recogemos en la función **`handleClick`**
+
+```jsx
+export function Button() {
+
+  const handleClick = (ev, text) => {
+    alert(`¡Has pulsado el botón con el mensaje ${text}!`);
+  }
+
+  return <button onClick={(ev) => handleClick(ev, "test")}>¡Púlsame!</button>;
+}
+```
+
+El objeto **`ev`** suele ser un objeto asociado al tipo de evento ocurrido. En nuestro caso, que es un evento **`click`** suele devolver un objeto **`PointerEvent`**. Sin embargo, en React, si hacemos un **`console.log(ev)`** comprobaremos que nos devuelve un **`SyntheticBaseEvent`**, algo similar a esto:
+
+```
+SyntheticBaseEvent {
+  _reactName: "onClick",
+  type: "click",
+  nativeEvent: PointerEvent,
+  target: button,
+  ...
+}
+```
+
+Un **evento sintético** es un **wrapper**, un objeto especial de React que envuelve el evento original (*que lo podemos encontrar en la propiedad **`nativeEvent`**). De esta forma, trabaja adaptando al ecosistema de React y nos facilita el trabajo, realizando ciertas tareas de forma automática y transparente:
+
+- 1️⃣ React utiliza **delegación de eventos**. En lugar de crear un evento para cada elemento, crea uno «global» para todos y los gestiona manualmente. Esto hace que sea más eficiente y reduce el uso de memoria.
+- 2️⃣ React no requiere usar **`removeEventListener()`** para limpiar los listeners de eventos, sino que lo hace automáticamente. Esto reduce la posibilidad de fugas de memoria y problemas de memoria con escucha de eventos.
+- 3️⃣ Aunque ya no es tan relevante, React también ofrece compatibilidad con navegadores antiguos como Internet Explorer, que gestionan los eventos de forma diferente.
