@@ -24,8 +24,7 @@ function component() {
 # 🔥 JSX
 En React se utiliza JSX como lenguaje de marcado en lugar de HTML. JSX es una sintaxis que, aunque parece HTML, realmente es Javascript y se encarga de leer el código JSX y convertirlo a un HTML equivalente con añadidos Javascript:
 
-
-````javascript
+```
 function component() {
   const name = "Manz";
   return (
@@ -33,11 +32,10 @@ function component() {
       <h1>¡Hola, {name}!</h1>
     </div>
   );
-}
+}`
 ```
 
-### [**🌌 Virtual DOM**](https://lenguajejs.com/react/introduccion/que-es-react/#virtual-dom)
-
+### [**🌌 Virtual DOM**]
 En el ecosistema de React no se suele trabajar directamente con el DOM. Aunque puedes hacerlo, está mal visto y se considera una mala práctica. Esto es así porque React utiliza su llamado **Virtual DOM**: una especie de DOM ligero en memoria que es al que **React** accede directamente. Por esta razón, normalmente el desarrollador de React no necesita preocuparse por el DOM. **React** se encargará de mantenerlo actualizado cuando sea necesario.
 
 Existe un **mito** que afirma que el «**DOM es lento**» y es mejor utilizar un [Virtual DOM](https://svelte.dev/blog/virtual-dom-is-pure-overhead). 
