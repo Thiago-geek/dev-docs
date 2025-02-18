@@ -102,7 +102,7 @@ Si conoces minimamente Javascript, esto te resultará bastante extraño, ya que 
 
 Para dejarlo más claro, vamos a ver que es realmente lo que le llega al navegador de ese fragmento de **código JSX**:
 
-```jsx
+```
 function component() {
   return <h1>Hola</h1>;
 }
@@ -132,7 +132,7 @@ La idea es que con React podamos trabajar con lógica de programación y estruct
 
 En cierta forma, la forma de pensar al trabajar con React es **crear funciones que devuelven código JSX, y que se utilizarán como si fueran una etiqueta HTML**. Veamos ahora un ejemplo donde un código HTML correcto no funcionaría en React:
 
-```jsx
+```
 export function App() {
   /* Aquí iría nuestra lógica Javascript */
   return (
@@ -160,7 +160,7 @@ La **sintaxis JSX** es inteligente y nos permite añadir código Javascript de
 - El **`name`** lo insertamos literalmente en el párrafo **`<p>`**, por lo que se genera como texto.
 - El **`styles`** contiene varias propiedades CSS. JSX es lo suficientemente inteligente para entender que lo estamos asociando a [estilos en linea](https://lenguajecss.com/cascada-css/estructura/inline-styles/), por lo que lo convierte al formato que necesita por nosotros:
 
-```jsx
+```
 export function App() {
   const name = "Manz";
   const styles = {
@@ -175,7 +175,7 @@ export function App() {
 }
 ```
 
-```html
+```
 <!-- Código HTML generado -->
 <div style="background:indigo;color:white;padding:5px 15px"><p>¡Hola, Manz!</p></div>
 ```
@@ -196,7 +196,7 @@ Es posible, que en el caso del ejemplo anterior, no queramos utilizar un element
 
 jsx
 
-```jsx
+```
 export function App() {
   /* ... */
 
@@ -222,7 +222,7 @@ Vamos a ver un ejemplo de componente muy sencillo utilizando ambas modalidades. 
 
 Aquí tienes un componente funcional. Se basa en construir una función, escribir su lógica en el interior (***bucles, funciones, variables, etc...***) y devolver un código JSX, que se utilizará para construir el HTML del componente:
 
-```jsx
+```
 function component() {
   const name = "Manz";
   return <h1>¡Hola, {name}!</h1>;
@@ -235,7 +235,7 @@ Ten en cuenta que en JSX se utiliza la sintaxis **`{variable}`** y no la sinta
 
 En el caso de los componentes de clase, observa que creamos una clase que extiende de **`Component`** o de **`React.Component`**, una clase base de React. Luego, creamos un método **`render()`** que es el que se ejecuta automáticamente para generar el HTML del componente:
 
-```jsx
+```
 class Component extends Component {
   render() {
     const name = "Manz";
@@ -254,7 +254,7 @@ Un aspecto fundamental en la programación es la **composición**. En React, es
 
 Hemos creado la función **`WelcomeUser`** y la hemos colocado en otro fichero **`.jsx`** con dicho nombre. Desde nuestro **`App.jsx`** podemos importarla y utilizarla como si fuera una etiqueta HTML. De esta forma podemos reutilizar o usar componentes en otros componentes:
 
-```jsx
+```
 import { WelcomeUser } from "./WelcomeUser.jsx";
 
 export function App() {
@@ -268,7 +268,7 @@ export function App() {
 }
 ```
 
-```jsx
+```
 /* WelcomeUser.jsx */
 export function WelcomeUser() {
   const user = "Manz";
@@ -301,7 +301,7 @@ En la parte de JSX crearemos un atributo **`onClick`**, exactamente igual a com
 
 jsx
 
-```jsx
+```
 export function Button() {
 
   const handleClick = () => {
@@ -321,7 +321,7 @@ Recuerda que puedes hacer esto con cualquier tipo de evento, simplemente añadi�
 - 1️⃣ En el caso de necesitar información del evento, añadimos un parámetro **`ev`**
 - 2️⃣ El segundo parámetro es nuestro dato, que recogemos en la función **`handleClick`**
 
-```jsx
+```
 export function Button() {
 
   const handleClick = (ev, text) => {
@@ -364,7 +364,7 @@ Detalles importantes sobre las **props**:
 
 Veamos dos ejemplos muy sencillos de un componente que pasa props a otro. Observa que en el segundo ejemplo, pasamos múltiples props, y para que sea menos verboso trabajar con ellas, desestructuramos y utilizamos directamente los valores de las props. Además, el último componente no pasa la prop **`role`**, y al igual que en Javascript, se puede añadir un valor por defecto:
 
-```jsx
+```
 function WelcomeUser(props) {
   return <h1>¡Hola {props.name}!</h1>;
 }
@@ -378,7 +378,7 @@ export function App() {
 }
 ```
 
-```jsx
+```
 function WelcomeUser({ name, role = "viewer" }) {
   return <h1>¡Hola {name} ({role})!</h1>;
 }
@@ -397,7 +397,7 @@ export function App() {
 
 En HTML, las etiquetas sólo pueden enviar strings a través de los atributos. Sin embargo, recuerda que en React no escribimos HTML, sino JSX, que si permite enviar estructuras más complejas por props, como por ejemplo objetos:
 
-```jsx
+```
 export function App() {
   return (
     <>
@@ -416,7 +416,7 @@ Observa el siguiente ejemplo. En la desestructuración hemos añadido la prop es
 
 En este caso, en el interior del componente sólo tenemos un **`<img>`**, por lo que **`children`** será dicho elemento y tras el **`<h1>`** aparecerá la imagen:
 
-```jsx
+```
 function WelcomeUser({ name, children }) {
   return (
     <>
@@ -439,7 +439,7 @@ Sin embargo, también puede ocurrir que tengamos un caso donde existan múltiple
 
 Observa este ejemplo, donde desestructuramos **`children`** y sacamos del array la **`<img>`** y el **`<p>`** para hacer referencia a ellas más cómodamente:
 
-```jsx
+```
 function WelcomeUser({ name, children }) {
   const [image, paragraph] = children;
   return (
@@ -469,7 +469,7 @@ Cuando vamos creando componentes, muchas veces creamos gran cantidad de props y 
 
 jsx
 
-```jsx
+```
 function DataInfo({ name, role, color, image }) {
   return (
     <div style={{ background: color }}>
@@ -497,3 +497,193 @@ export function App() {
 ```
 
 El componente **`<WelcomeUser>`** le está enviando todas sus props al componente **`<DataInfo />`**, pero en lugar de definirlas una por una, simplemente escribimos **`{...props}`**, desestructurando las props y referenciandolas todas.
+
+# [**¿Qué son los Hooks?**](https://lenguajejs.com/react/componentes/hooks/#qu%C3%A9-son-los-hooks)
+
+Los **hooks** son funciones especiales (***que empiezan siempre por `use`***) que permiten realizar tareas concretas dentro del ecosistema de **React**. Existen muchos hooks, muchos de ellos integrados en **React**, pero también es posible crear nuestros propios hooks personalizados.
+
+Los objetivos que persiguen los hooks son los siguientes:
+
+- 1️⃣ **Simplificar** la complejidad y conseguir componentes más sencillos
+- 2️⃣ **Reutilizar** lógica Javascript y su estado (***información que cambia***)
+- 3️⃣ **Organizar** mejor nuestro código y escribir menos líneas
+
+# [**Reglas fundamentales**](https://lenguajejs.com/react/componentes/hooks/#reglas-fundamentales)
+
+Los **hooks** de React tienen algunas reglas principales que hay que cumplir:
+
+- 1️⃣ Los hooks se llaman en el **nivel superior**. Nunca en condicionales, bucles o funciones anidadas.
+- 2️⃣ Sólo se pueden llamar en componentes funcionales o hooks. Nunca en funciones normales de Javascript.
+
+# [**El hook `useState`**](https://lenguajejs.com/react/componentes/hooks/#el-hook-usestate)
+
+Probablemente, el hook más sencillo de mostrar como ejemplo sea **`useState`**. Aunque lo explicaremos más adelante, vamos a ver una pequeña demostración de código donde se vea como funciona este hook.
+
+El hook **`useState`** permite añadir y gestionar **un estado** en componentes funcionales, algo que sólo era posible antiguamente con las clases de Javascript. Si el concepto **estado** es nuevo para ti, cuando hablamos de estado nos referimos a la información que cambia en un componente.
+
+El ejemplo más clásico de estado es la creación de un contador, que contiene un estado (***que cambia***) que es el número del contador. Veamos un ejemplo de código:
+
+```
+function Counter() {
+  const [counter, setCounter] = useState(0);
+
+  return (
+    <div>
+      <p>El contador está en: {counter}</p>
+      <button onClick={() => setCounter(counter + 1)}>Aumentar</button>
+    </div>);
+}
+```
+
+El código es bastante sencillo. Observa que en el interior del componente tenemos una primera línea donde usamos el hook **`useState`**. Luego, más adelante, devolvemos un bloque **JSX** donde utilizamos tanto **`counter`** como **`setCounter`**. Vamos a explicar antes la primera parte.
+
+Recordemos que los hooks son simplemente funciones. En la primera línea estamos ejecutando el hook **`useState()`** y nos devuelve un array con dos elementos, que estamos [desestructurando](https://lenguajejs.com/javascript/arrays/desestructuracion-arrays/) para tenerlo en dos variables separadas.
+
+- 1️⃣ El primer elemento lo hemos llamado **`counter`** y es la información actual del contador, el estado.
+- 2️⃣ El segundo elemento lo hemos llamado **`setCounter`** y es una función para actualizar ese estado.
+
+> Por norma general, los hooks useState utilizan esta forma de nombrar, donde el segundo elemento suele comenzar por set, seguido del nombre del primer elemento, utilizando camelCase.
+> 
+
+Además, observa que el hook **`useState()`** se usa pasando el valor **`0`** por parámetro. Este valor es el **estado inicial** de nuestro counter. Ahora que tenemos claro esto, podemos entender mejor el uso de **`counter`** y **`setCounter`** en la parte del JSX.
+
+# [**Otros hooks**](https://lenguajejs.com/react/componentes/hooks/#otros-hooks)
+
+Aquí tienes una lista de varios hooks populares en el ecosistema de **React**:
+
+| **Nombre** | **Descripción** | **Más info** |
+| --- | --- | --- |
+| **`useState`** | Crea un estado mutable y proporciona acceso para mostrarlo o modificarlo. | [Ver estado](https://lenguajejs.com/react/datos/estado/) |
+| **`useEffect`** | Ejecuta lógica de forma automática después de que el DOM (UI) haya cambiado. | [Ver efectos](https://lenguajejs.com/react/componentes/useeffect/) |
+| **`useContext`** | Accede a un valor compartido desde cualquier parte del código. | [Ver contexto](https://lenguajejs.com/react/datos/context-api/) |
+| **`useRef`** | Crea una referencia mutable que mantenga el valor o permita acceder al DOM. | [Ver acceso al DOM](https://lenguajejs.com/react/datos/useref/) |
+| **`useReducer`** | Permite manejar valores que cambian según diferentes accciones. |  |
+| **`useCallback`** | Memoriza (cachea) funciones para evitar volverlas a crear. |  |
+| **`useMemo`** | Memoriza (cachea) valores calculados para no recalcularlos si sus datos no han cambiado. |  |
+| **`useLayoutEffect`** | Como **`useEffect`**, pero ejecutandolo después de actualizar el DOM y antes de verlo en pantalla. |  |
+| **`useDebugValue`** | Muestra información útil en la consola o Dev Tools. |  |
+| **`useId`** | Genera un identificador único inmutable entre renderizados. |  |
+| **`useTransition`** | Asegura que las acciones lentas no bloqueen las rápidas mientras se ejecutan. |  |
+| **`useDeferredValue`** | Retrasa la actualización de un valor hasta que el navegador tenga tiempo libre. |  |
+
+# [**Efectos secundarios en React**](https://lenguajejs.com/react/componentes/useeffect/)
+
+En React, los **efectos secundarios** se gestionan mediante el hook **`useEffect`**, pero antes de empezar a trabajar con ellos necesitamos entender sus bases. En programación, llamamos **efecto secundario** (***o side-effect***) a cualquier acción que realiza nuestro código (***en el interior de una función, por ejemplo***) y afecta a algo que se encuentra fuera del ámbito de esa función, es decir, que estamos alterando algo no relacionado directamente con lo que devolvemos en la función.
+
+# [**Efectos secundarios**](https://lenguajejs.com/react/componentes/useeffect/#efectos-secundarios)
+
+Para entender mejor el concepto de **efecto secundario** de la programación, imaginemos esta sencilla función de un **contador**:
+
+```
+let counter = 0;
+
+function incrementCounter() {
+  counter++; // Modifica la variable global (efecto secundario)
+}
+
+incrementCounter();
+console.log(counter); // 1
+```
+
+Dicha función está alterando el valor de **`counter`**, el cuál no pertenece a la función **`incrementCounter()`**, por lo que aunque está realizando nuestro objetivo correctamente (***incrementar el contador***), se está realizando mediante un **efecto secundario**.
+
+Algunos ejemplos comunes de efectos secundarios en JavaScript podrían ser:
+
+- Modificar variables fuera del ámbito de su función (***ej: variables globales***)
+- Realizar una operación de entrada/salida (***ej: escribir en un archivo, petición a una API...***)
+- Actualizar y modificar elementos del DOM (***ej: cambios en la estructura de la página***)
+- Crear temporizadores (***ej: setTimeout o setInterval***)
+- Suscribirse a eventos (***ej: escuchar un click u otra acción***)
+
+# [**Funciones puras**](https://lenguajejs.com/react/componentes/useeffect/#funciones-puras)
+
+El ejemplo anterior se puede reeescribir intentando que tus funciones sean **puras**. Una **función pura** es una función que cumple estas condiciones:
+
+- 1️⃣ Dado un argumento por parámetro, siempre devuelve el mismo resultado (***es determinista***).
+- 2️⃣ No muta nada fuera de su ámbito (***no tiene efectos secundarios***).
+
+Veamos el ejemplo anterior, cambiando la función **`incrementCounter()`** para que sea una función pura, y evitando la creación de efectos secundarios:
+
+js
+
+```
+let counter = 0;
+
+function incrementCounter(counter) {
+  return counter + 1;
+}
+
+counter = incrementCounter(counter);
+console.log(counter); // 1
+```
+
+Observa que en lugar de mutar la variable externa **`counter`** en la función, lo que hacemos es devolver una versión modificada de los datos que recibimos. Esto ayuda considerablemente a no crear efectos secundarios y a que nuestro código sea más predecible y evitemos bugs accidentales.
+
+# [**Side effects en React**](https://lenguajejs.com/react/componentes/useeffect/#side-effects-en-react)
+
+En el ecosistema de **React**, el concepto **efecto secundario** (***muchas veces abreviado como efecto***) aparece mucho y también se suele relacionar con las acciones **que tienen consecuencias fuera de la función o componente en la que se ejecuta**.
+
+En ReactLand™ se tiende a evitar los efectos secundarios en las funciones o componentes siempre que sea posible, ya que no encajan bien con la filosofía de React:
+
+- 1️⃣ React renderiza la UI cuando cambia el estado (***predecible***). Los efectos no son predecibles.
+- 2️⃣ Efectos innecesarios pueden impactar negativamente en el rendimiento.
+- 3️⃣ Los efectos secundarios descontrolados son dificiles de depurar y testear.
+
+Sin embargo, a pesar de estas dificultades, los efectos secundarios son a menudo inevitables para construir una aplicación. Para ello, existe el hook **`useEffect`**, una herramienta para manejarlos.
+
+# [**El hook `useEffect`**](https://lenguajejs.com/react/componentes/useeffect/#el-hook-useeffect)
+
+En React, existe un hook llamado **`useEffect`** que sirve para gestionar efectos secundarios de forma controlada, predecible y eficiente. Primero, analicemos la estructura de un **`useEffect()`** para conocer las partes clave de este hook:
+
+```
+useEffect(() => {
+  /* Montaje */
+
+  return () => { /* Desmontaje */ }
+}, [/* dependencias */]);
+```
+
+- 1️⃣ El **`useEffect()`** tiene dos parámetros: la función (***de montaje***) y las dependencias.
+- 2️⃣ La función del **`useEffect`** se ejecuta cuando se monta el componente
+- 3️⃣ El array **`deps`** indica las dependencias del **`useEffect`**
+- 4️⃣ La función devuelta por el **`return`** se ejecuta cuando se desmonta el componente
+
+La parte más importante aquí probablemente sea el **array de dependencias**, así que vamos a explicarlo primero. Las situaciones son las siguientes:
+
+| **Dependencias** | **Descripción** | **Montaje** | **En cada renderizado** |
+| --- | --- | --- | --- |
+| **`[]`** | Sólo se ejecuta la primera vez (*montaje*). | ✅ | ❌ |
+| **`[dep1]`** | Se ejecuta primera vez y al cambiar. | ✅ | 🟨 Cuando cambia **`dep1`** |
+| **`[dep1, dep2]`** | Se ejecuta primera vez y al cambiar. | ✅ | 🟨 Cuando cambian **`dep1`** y/o **`dep2`** |
+| *Sin array de dependencias* | Se ejecuta primera vez y en cada renderizado. | ✅ | ✅ Siempre |
+
+Con esto claro, veamos ahora un código real utilizando un **`useEffect`**. Vamos a crear un [temporizador](https://lenguajejs.com/javascript/web-apis/temporizadores/) que se ejecutará cada segundo para mostrar la hora actual.
+
+Al inicio del componente **`Clock`** creamos un estado **`time`** con la hora actual. Luego, creamos un **`useEffect`** con un array de dependencias vacío, por lo que se ejecutará solo la primera vez que se monta el componente:
+
+jsx
+
+```
+import { useState, useEffect } from "react";
+
+export function Clock() {
+  const [time, setTime] = useState(new Date().toLocaleTimeString());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTime(new Date().toLocaleTimeString());
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return <h1>Hora actual: {time}</h1>;
+}
+```
+
+En dicho **`useEffect`** creamos el **`setInterval`** cada 1 segundo (***1000ms***) y mutamos el estado **`time`** para cambiar la hora actual.
+
+Por último, en el **`return`** devolvemos una función que se ejecutará cuando se desmonte el componente, donde es necesario realizar tareas de limpieza para evitar **fugas de memoria** o problemas similares.
+
+> De esta forma puedes gestionar los efectos secundarios en tus componentes de React de forma controlada. Aunque es un sistema muy potente, ten mucho cuidado y no abuses de useEffect ya que puede complicar la lógica, impactar en el rendimiento y muchas veces se puede buscar una alternativa sin efectos secundarios.
+>
