@@ -349,3 +349,151 @@ Un **evento sintético** es un **wrapper**, un objeto especial de React que e
 - 1️⃣ React utiliza **delegación de eventos**. En lugar de crear un evento para cada elemento, crea uno «global» para todos y los gestiona manualmente. Esto hace que sea más eficiente y reduce el uso de memoria.
 - 2️⃣ React no requiere usar **`removeEventListener()`** para limpiar los listeners de eventos, sino que lo hace automáticamente. Esto reduce la posibilidad de fugas de memoria y problemas de memoria con escucha de eventos.
 - 3️⃣ Aunque ya no es tan relevante, React también ofrece compatibilidad con navegadores antiguos como Internet Explorer, que gestionan los eventos de forma diferente.
+
+# [**¿Qué son las Props?**](https://lenguajejs.com/react/componentes/props/)
+
+En el ecosistema de React (***y en muchos otros frameworks y librerías***) se le llama **Props** (***properties***) a los datos que se pasan de un componente a otro a través de los parámetros de una función. Estas **props** son unidireccionales, es decir, sólo se pueden pasar en un sentido (***desde elementos padres a hijos***).
+
+Detalles importantes sobre las **props**:
+
+- 1️⃣ **Inmutables**: Los hijos no pueden modificar las props recibidas.
+- 2️⃣ **Personalizables**: Las props permiten personalizar componentes y hacerlos reutilizables.
+- 3️⃣ **Unidireccionales**: Sólo van desde padres a hijos.
+
+# [**Pasando props**](https://lenguajejs.com/react/componentes/props/#pasando-props)
+
+Veamos dos ejemplos muy sencillos de un componente que pasa props a otro. Observa que en el segundo ejemplo, pasamos múltiples props, y para que sea menos verboso trabajar con ellas, desestructuramos y utilizamos directamente los valores de las props. Además, el último componente no pasa la prop **`role`**, y al igual que en Javascript, se puede añadir un valor por defecto:
+
+```jsx
+function WelcomeUser(props) {
+  return <h1>¡Hola {props.name}!</h1>;
+}
+
+export function App() {
+  return (
+    <>
+      <WelcomeUser name="Manz" />
+      <WelcomeUser name="Blur" />
+    </>);
+}
+```
+
+```jsx
+function WelcomeUser({ name, role = "viewer" }) {
+  return <h1>¡Hola {name} ({role})!</h1>;
+}
+
+export function App() {
+  return (
+    <>
+      <WelcomeUser name="Manz" role="streamer" />
+      <WelcomeUser name="Blur" role="moderator" />
+      <WelcomeUser name="JoseLuis" />
+    </>);
+}
+```
+
+**Importante**: Recuerda que las props son para datos que no cambian (***inmutables***). Estos datos no se pueden modificar desde el interior del componente que recibe dichas props. Más adelante veremos como gestionar los datos que mutan o cambian, que se denominan **Estado**.
+
+En HTML, las etiquetas sólo pueden enviar strings a través de los atributos. Sin embargo, recuerda que en React no escribimos HTML, sino JSX, que si permite enviar estructuras más complejas por props, como por ejemplo objetos:
+
+```jsx
+export function App() {
+  return (
+    <>
+      <WelcomeUser user={{ name: "Anonymous", id: Math.floor(Math.random() * 256) }} />
+    </>);
+}
+```
+
+En este caso la prop **`user`** contiene un objeto con dos propiedades: el  **`name`** y el **`id`**. Aún así, es conveniente intentar mantener simples las props que se envían a los componentes.
+
+# [**La prop `children`**](https://lenguajejs.com/react/componentes/props/#la-prop-children)
+
+Observa que en los ejemplos anteriores hemos autocerrado nuestro componente **`<WelcomeUser />`**. Esto significa que la etiqueta no tiene más etiquetas anidadas en su interior. Sin embargo, es posible no utilizar el autocierre y anidar etiquetas y/o contenido.
+
+Observa el siguiente ejemplo. En la desestructuración hemos añadido la prop especial **`children`**, que no es un atributo definido como **`name`**, sino que es una prop especial que será el elemento hijo de nuestro componente.
+
+En este caso, en el interior del componente sólo tenemos un **`<img>`**, por lo que **`children`** será dicho elemento y tras el **`<h1>`** aparecerá la imagen:
+
+```jsx
+function WelcomeUser({ name, children }) {
+  return (
+    <>
+      <h1>¡Hola {name}!</h1>
+      {children}
+    </>);
+}
+
+export function App() {
+  return (
+    <>
+      <WelcomeUser name="Manz">
+        <img src="/assets/images/manzdev-hover.webp" alt="ManzDev" />
+      </WelcomeUser>
+    </>);
+}
+```
+
+Sin embargo, también puede ocurrir que tengamos un caso donde existan múltiples etiquetas en el interior del componente. En este caso, **`children`** será un  y podremos hacer referencia a cada uno de los elementos hijos.
+
+Observa este ejemplo, donde desestructuramos **`children`** y sacamos del array la **`<img>`** y el **`<p>`** para hacer referencia a ellas más cómodamente:
+
+```jsx
+function WelcomeUser({ name, children }) {
+  const [image, paragraph] = children;
+  return (
+    <>
+      <h1>¡Hola {name}!</h1>
+      {paragraph}
+      {image}
+    </>);
+}
+
+export function App() {
+  return (
+    <>
+      <WelcomeUser name="Manz">
+        <img src="/images/manzdev.webp" alt="ManzDev" />
+        <p>Esto es un avatar de <strong>ManzDev</strong>.</p>
+      </WelcomeUser>
+    </>);
+}
+```
+
+Con esto, ya hemos visto como acceder a información a través de **props** y al contenido del componente a través de **`children`**. Más adelante, continuaremos profundizando en más detalles relacionados con estos temas.
+
+# [**Propagación de props**](https://lenguajejs.com/react/componentes/props/#propagaci%C3%B3n-de-props)
+
+Cuando vamos creando componentes, muchas veces creamos gran cantidad de props y es tendioso y repetitivo referenciarlas una a una. Para solucionarlo, podemos utilizar la llamada **propagación de props**. Observa el componente **`WelcomeUser`** y como le pasamos las props a **`DataInfo`**:
+
+jsx
+
+```jsx
+function DataInfo({ name, role, color, image }) {
+  return (
+    <div style={{ background: color }}>
+      <h1>{name}</h1>
+      <h2>{role}</h2>
+      <img src={image} alt={name} />
+    </div >);
+}
+
+function WelcomeUser(props) {
+  const { name } = props;
+  return (
+    <>
+      <h1>¡Hola {name}!</h1>
+      <DataInfo {...props} />
+    </>);
+}
+
+export function App() {
+  return (
+    <>
+      <WelcomeUsername="Manz"role="streamer"color="indigo"image="manzdev.webp"/>
+    </>);
+}
+```
+
+El componente **`<WelcomeUser>`** le está enviando todas sus props al componente **`<DataInfo />`**, pero en lugar de definirlas una por una, simplemente escribimos **`{...props}`**, desestructurando las props y referenciandolas todas.
