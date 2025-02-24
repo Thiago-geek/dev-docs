@@ -1412,3 +1412,93 @@ Por otro lado, en el caso de **`requestAnimationFrame()`** se podrá comprobar
 > 
 
 De la misma forma que **`setTimeout()`** y **`setInterval()`**, esta función tiene su propia función para cancelar el temporizador optimizado, que se denomina **`cancelAnimationFrame()`**. De la misma forma, también se le tiene que pasar el **`id`** que devuelve **`requestAnimationFrame()`**.
+
+# [**LocalStorage y SessionStorage**](https://lenguajejs.com/javascript/web-apis/localstorage/)
+
+## **Almacenamiento persistente de datos en el navegador**
+
+Una de las limitaciones que podemos tener en Javascript cliente (***navegador***) es que a priori no es posible guardar de forma **persistente** nuestros datos, de forma que cuando recargues la página, continue conservando esos datos. Sin embargo, existe un mecanismo de navegador llamado **LocalStorage** que permite hacer algo similar: guardar los datos que le indiquemos en el propio navegador del usuario, de modo que posteriormente pueda recuperarlos.
+
+# [**¿Qué es el LocalStorage?**](https://lenguajejs.com/javascript/web-apis/localstorage/#qu%C3%A9-es-el-localstorage)
+
+El **LocalStorage**, como su propio nombre indica, es un almacén que permite guardar datos de forma local, en nuestro navegador. Esto es importante porque hay que tener en cuenta que los datos sólo serán accesibles por el usuario que los ha guardado, y en el navegador que lo ha hecho, ya que se almacenan ahí.
+
+Algunos datos importante sobre el almacenamiento de datos:
+
+- 1️⃣ Cada dato guardado se identifica con un nombre, que será un .
+- 2️⃣ Los valores se guardan siempre como . Si tienes objetos o arrays, [pasalos a JSON](https://lenguajejs.com/javascript/objetos/json/#c%C3%B3mo-utilizar-json).
+- 3️⃣ Los datos se guardan por **dominio**. Desde un dominio diferente no puedes recuperar esos datos.
+- 4️⃣ Si utilizas otro **navegador**, no tendrás los datos, ya que se guardan en el navegador. Puedes verlos desde el **Dev Tools**, en la pestaña **Applications**, sección **LocalStorage**.
+
+El objeto **`localStorage`** tiene los siguientes métodos, que podemos escribir en nuestro código:
+
+| **Método o propiedad** | **Descripción** |
+| --- | --- |
+| **`length`** | Devuelve la cantidad de elementos de datos almacenados en la página actual. |
+| **`getItem(key)`** | Devuelve la información asociada al dato con nombre **`key`**. |
+| **`setItem(key, value)`** | Guarda el valor **`value`** en el dato con nombre **`key`**. |
+| **`removeItem(key)`** | Elimina el dato guardado con el nombre **`key`**. |
+| **`key(number)`** | Muestra la key del elemento guardado en la posición **`number`** del localStorage. |
+| **`clear()`** | Vacía todos los datos del almacén del localStorage para esta página. |
+
+Mediante estos métodos podemos acceder a los datos del localStorage. Veamos como funcionan.
+
+# [**Obtener o guardar datos**](https://lenguajejs.com/javascript/web-apis/localstorage/#obtener-o-guardar-datos)
+
+Para obtener o guardar datos en el **localStorage**, simplemente debemos utilizar los métodos **`getItem()`** o **`setItem()`** con la información correspondiente:
+
+```jsx
+localStorage.length;  // 8 (Datos en el localStorage)
+localStorage.setItem("username", "ManzDev"); // Guardamos
+
+const username = localStorage.getItem("username");  // Recuperamos
+localStorage.removeItem("username");  // Eliminamos
+
+console.log(username);  // "ManzDev"
+```
+
+Existe una forma rápida de guardar y obtener datos en el localStorage. En lugar de utilizar los métodos anteriores, podemos hacer referencia directamente a la propiedad concreta que queremos obtener o guardar:
+
+```jsx
+localStorage.username = "ManzDev";    // Equivale a .setItem()
+localStorage.username;                // Equivale a .getItem()
+```
+
+# [**Obtener todos los datos guardados**](https://lenguajejs.com/javascript/web-apis/localstorage/#obtener-todos-los-datos-guardados)
+
+Si queremos acceder a todos los datos guardados en el **`localStorage`**, podemos hacer un bucle que revise todos los elementos con un índice. Por ejemplo, desde **`0`** hasta **`localStorage.length`** y obtenemos el nombre del dato con **`key()`** y su valor con **`getItem()`**:
+
+```jsx
+for (let i = 0; i < localStorage.length; i++) {
+  const key = localStorage.key(i);
+  const value = localStorage.getItem(key);
+  console.log(`${key}=${value}`);
+}
+```
+
+# [**Vaciar el almacén**](https://lenguajejs.com/javascript/web-apis/localstorage/#vaciar-el-almac%C3%A9n)
+
+Aunque es menos frecuente, es posible ejecutar el método **`clear()`** para vaciar todas las keys del localStorage. Ojo, que esto sólo borra las keys para el dominio actual, no todas las que están almacenadas en el navegador. Veamos un ejemplo:
+
+```jsx
+localStorage.clear();   // Vacía todas las keys
+```
+
+# [**¿Qué es el SessionStorage?**](https://lenguajejs.com/javascript/web-apis/localstorage/#qu%C3%A9-es-el-sessionstorage)
+
+Además del **localStorage** mencionado, tenemos otra versión similar denominada **sessionStorage**. La idea es la misma, ambos pertenecen a la **API WebStorage**, sin embargo, la diferencia principal es que **`sessionStorage`** guarda temporalmente los datos **hasta que cierras la pestaña**, mientras que **`localStorage`** los guarda y no los borra aunque cierres la pestaña del navegador.
+
+Sin embargo, **`sessionStorage`** tiene los mismos métodos y la API se usa de la misma forma que **`localStorage`**.
+
+# [**Características interesantes**](https://lenguajejs.com/javascript/web-apis/localstorage/#caracter%C3%ADsticas-interesantes)
+
+Algunas características interesantes comparando **LocalStorage** y **SessionStorage**:
+
+| **Característica** | **LocalStorage** | **SessionStorage** |
+| --- | --- | --- |
+| **Acceso** | En todas las pestañas del mismo dominio. | Sólo en la pestaña que se creó. |
+| **Duración** | Hasta que se eliminen manualmente. | Hasta que se cierra la pestaña. |
+| **Capacidad** | ~[10MB](https://developer.chrome.com/docs/extensions/reference/api/storage?hl=es-419#storage_areas) en Chrome, aunque puede variar por navegador. | Similar a localStorage. |
+| **Modo incógnito** | Los datos se borran al cerrar la pestaña. | Igual a LocalStorage. |
+
+Como curiosidad, si comparamos el localStorage/sessionStorage con las clásicas cookies, suelen ser un buen reemplazo, ya que evitan el clásico problema de enviar la cookie en cada petición web, mientras que la API de Web Storage sólo descarga los datos cuando lo solicitas desde Javascript.
