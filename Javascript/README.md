@@ -609,3 +609,806 @@ En Javascript existen varias formas de gestionar la **asincronía**. Observa en
 | Mediante **`promesas`** | Mecanismo moderno para gestionar la asincronía de forma no bloqueante. | [Ver Promesas](https://lenguajejs.com/javascript/asincronia/promesas/) |
 | Mediante **`async`**/**`await`** | Una forma simplificada de manejar promesas, pero bloqueante. | [Ver Async/Await](https://lenguajejs.com/javascript/asincronia/async-await/) |
 | Mediante **`top-level await`** | Una variación de la anterior, donde no es necesario usar **`async`** en determinados contextos. |  |
+
+## [El contexto de renderización](https://developer.mozilla.org/es/docs/Web/API/Canvas_API/Tutorial/Basic_usage#el_contexto_de_renderizaci%C3%B3n)
+
+[`<canvas>`](https://developer.mozilla.org/es/docs/Web/HTML/Element/canvas) crea un lienzo de dibujo fijado que expone uno o mas contextos renderizados, los cuales son usados para crear y manipular el contenido mostrado. Nos enfocaremos en renderizacion de contextos 2D. Otros contextos deberan proveer diferentes tipos de renderizaciones; por ejemplo, [WebGL](https://developer.mozilla.org/es/docs/Web/API/WebGL_API) usa un 3D contexto ("experimental-webgl") basado sobre [OpenGL ES](https://www.khronos.org/opengles/).
+
+El canvas esta inicialmente en blanco. Para mostrar alguna cosa, un script primero necesita acceder al contexto a renderizar y dibujar sobre este. El elemento [`<canvas>`](https://developer.mozilla.org/es/docs/Web/HTML/Element/canvas) tiene un [method](https://developer.mozilla.org/es/docs/Web/API/HTMLCanvasElement#methods) llamado `getContext()`, usado para obtener el contexto a renderizar y sus funciones de dibujo. `getContext()` toma un parametro, el tipo de contexto. Para graficos 2D, como los que cubre este tutorial, su especificacion es "2d".
+
+```jsx
+var canvas = document.getElementById("tutorial");
+var ctx = canvas.getContext("2d");
+```
+
+La primera linea regresa el nodo DOM para el elemento [`<canvas>`](https://developer.mozilla.org/es/docs/Web/HTML/Element/canvas) llamando al metodo [`document.getElementById()`](https://developer.mozilla.org/es/docs/Web/API/Document/getElementById). Una vez tu tienes el elemento nodo, tu puedes acceder al contexto de dibujo usando su metodo `getContext()`.
+
+# **Window: requestAnimationFrame()**
+
+El **`window.requestAnimationFrame()`**método le indica al navegador que desea realizar una animación. Le solicita que llame a una función de devolución de llamada proporcionada por el usuario antes del siguiente repintado.
+
+La frecuencia de las llamadas a la función de devolución de llamada generalmente coincide con la frecuencia de actualización de la pantalla. La frecuencia de actualización más común es 60 Hz (60 ciclos/fotogramas por segundo), aunque también se utilizan ampliamente 75 Hz, 120 Hz y 144 Hz. `requestAnimationFrame()`Las llamadas se pausan en la mayoría de los navegadores cuando se ejecutan en pestañas en segundo plano o en mensajes ocultos [`<iframe>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe), con el fin de mejorar el rendimiento y la duración de la batería.
+
+# [**La etiqueta HTML <canvas>**](https://lenguajejs.com/javascript/canvas/etiqueta-html-canvas/)
+
+## **Primeros pasos a la programación gráfica con Javascript**
+
+En HTML, existe un elemento HTML llamado **`<canvas>`** que sirve como lienzo en blanco donde se puede dibujar mediante programación. 
+
+Aunque se trata de un elemento HTML, toda la lógica de programación se realiza mediante Javascript, utilizando su propia API.
+
+# [**El elemento `<canvas>`**](https://lenguajejs.com/javascript/canvas/etiqueta-html-canvas/#el-elemento-canvas)
+
+Para comenzar a utilizar el elemento **`<canvas>`**, básicamente lo creamos en el HTML y lo localizamos desde Javascript mediante el DOM. También es posible crearlo desde Javascript mediante **`document.createElement()`** y añadirlo al HTML si lo preferimos.
+
+Los primeros pasos suelen ser indicar el tamaño que tendrá el lienzo, para poder verlo en la página. Eso lo haremos simplemente dándole un **`width`** y **`height`** a nuestro elemento **`<canvas>`**:
+
+```jsx
+const canvas = document.querySelector("canvas");
+  canvas.width = 320;
+  canvas.height = 240;
+  canvas.style.background = "#000";
+```
+
+Ten en cuenta que en la última línea le estamos dando un color de fondo negro al canvas mediante CSS. Esto lo estamos haciendo ahora de esta forma porque es sencillo y rápido hacerlo mediante JS/CSS, pero generalmente se utiliza el **`fill()`** o **`fillRect()`** de canvas, que veremos un poco más adelante.
+
+# [**El contexto del canvas**](https://lenguajejs.com/javascript/canvas/etiqueta-html-canvas/#el-contexto-del-canvas)
+
+Para trabajar con canvas, tenemos que crear un **contexto**, que es el objeto que nos permite controlar nuestro lienzo. Este objeto se toma del canvas mediante el método **`.getContext()`** y hay que indicarle por parámetro el tipo de lienzo que queremos:
+
+```jsx
+ const canvas = document.querySelector("canvas");
+  const ctx = canvas.getContext("2d");
+  canvas.width = 320;
+  canvas.height = 240;
+  canvas.style.background = "#ccc";
+```
+
+Podemos establecer diferentes tipos diferentes de lienzo:
+
+| **Tipo** | **Objeto** | **Orientación del contexto** |
+| --- | --- | --- |
+| **`"2d"`** | **`CanvasRenderingContext2D`** | Gráficos 2D (lineas, formas, texto, imágenes...). |
+| **`"webgl2"`** | **`WebGL2RenderingContext`** | API basada en OpenGL ES 3.0 para 2D/3D con aceleración por hardware. |
+| **`"webgpu"`** | **`GPUCanvasContext`** | Gráficos de alta eficiencia (optimizado para tarjetas gráficas modernas). |
+| **`"bitmaprenderer"`** | **`ImageBitmapRenderingContext`** | Orientado para renderizar imágenes con alto rendimiento. |
+
+En esta documentación nos vamos a centrar en **gráficos 2D**, que son los más sencillos para comenzar. 
+
+# [**Dibujar en el canvas**](https://lenguajejs.com/javascript/canvas/etiqueta-html-canvas/#dibujar-en-el-canvas)
+
+Una vez hemos creado nuestro contexto, que hemos almacenado en una variable llamada **`ctx`**, vamos a trabajar con varios métodos para dibujar en el canvas.
+
+Antes de nada, ten en cuenta que vamos a utilizar propiedades como **`.fillStyle`** o **`.strokeStyle`** para establecer estilo y dibujar rellenos o trazos, como veremos en los ejemplos. La tabla que ves a continuación son algunas de las siguientes funciones que tenemos disponibles para utilizar con nuestro contexto 2D de canvas:
+
+| **Método** | **Descripción** |
+| --- | --- |
+| **Formas geométricas** |  |
+| **`.beginPath()`** / **`.closePath()`** | Comienza o cierra una ruta. |
+| **`.ellipse()`** | Crea un círculo ovalado (elipse) indicando centro, radios, ángulos, etc. |
+| **`.rect()`** | Crea un rectángulo con un ancho y altura indicado. |
+| **`.stroke()`** / **`.fill()`** | Dibuja el contorno de la ruta, y rellena el interior. |
+| **`.moveTo()`** / **`.lineTo()`** | Se mueve a una coordenada sin dibujar trazo o dibujándolo. |
+| **Dibujo directo** |  |
+| **`.strokeRect()`** / **`.fillRect()`** | Dibuja el contorno o el relleno de un rectángulo. |
+| **`.strokeText()`** / **`.fillText()`** | Dibuja el contorno o el relleno de un texto. |
+| **`.roundRect()`** | Dibuja un rectángulo con bordes redondeados. |
+| **`.clearRect()`** | Borra el lienzo completo o una porción de él. |
+| **Curvas** |  |
+| **`.arc()`** / **`.arcTo()`** | Dibuja el arco de un círculo o el arco entre dos líneas. |
+| **`.bezierCurveTo()`** | Dibuja una curva bézier cúbica a partir de un punto con 3 puntos de control. |
+| **`.quadraticCurveTo()`** | Dibuja una curva cuadrática a partir de un punto, con 2 puntos de control. |
+
+# [**Estado del canvas**](https://lenguajejs.com/javascript/canvas/etiqueta-html-canvas/#estado-del-canvas)
+
+Debes saber que nuestro **`<canvas>`** tiene la posibilidad de guardar su estado en una estructura de tipo pila y recuperarlo posteriormente. Cuando hablamos de **estado** nos referimos a propiedades como **`.fillStyle`**, **`.strokeStyle`**, **`.globalAlpha`**, etc... También transformaciones como **`translate`**, **`scale`**, **`rotate`** o recortes con **`.clip()`**.
+
+Utilizando el método **`.save()`** guardamos en la pila, mientras que con **`.restore()`** recuperamos el último estado guardado.
+
+Observa el siguiente ejemplo, donde:
+
+- 1️⃣ Establecemos un color rosa de relleno y guardamos el estado.
+- 2️⃣ Cambiamos el color de relleno a verde.
+- 3️⃣ Cada segundo, dibujamos un cuadradito (verde).
+- 4️⃣ Cuando hagamos click, recuperamos el estado y lo pintará rosa.
+
+```jsx
+ const canvas = document.querySelector("canvas");
+  const ctx = canvas.getContext("2d");
+  canvas.width = 200;
+  canvas.height = 200;
+  canvas.style.background = "#ccc";    // lightgrey
+
+  // Guardamos el estado con el color de relleno rosa
+  ctx.fillStyle = "deeppink";
+  ctx.save();
+
+  // Cada segundo se añadirá un nuevo cuadrado verde
+  ctx.fillStyle = "green";
+  setInterval(() => {
+    const x = Math.floor(Math.random() * canvas.width);
+    const y = Math.floor(Math.random() * canvas.height);
+    ctx.fillRect(x, y, 50, 50);
+  }, 1000);
+
+  // Cuando hagas click, el color se restaura a rosa
+  canvas.addEventListener("click", () => ctx.restore());
+```
+
+Además de estos métodos para manejar el estado, también podemos realizar transformaciones o acciones similares. Estos son los métodos que tenemos en canvas para realizarlos:
+
+| **Método** | **Descripción** |
+| --- | --- |
+| **Estado** |  |
+| **`.save()`** | Guarda el estado actual del lienzo en una pila. |
+| **`.restore()`** | Restaura el último estado guardado en la pila con **`.save()`**. |
+| **`.reset()`** | Reinicia el estado del lienzo. Experimental, se recomienda usar **`.resetTransform()`**. |
+| **Transformaciones** |  |
+| **`.transform()`** | Aplica una transformación acumulativa, respetando la transformación previa. |
+| **`.setTransform()`** | Aplica una transformación, reemplazando cualquier transformación previa. |
+| **`.getTransform()`** | Devuelve un objeto **`DOMMatrix`** con la transformación actual del lienzo. |
+| **`.resetTransform()`** | Elimina todas las transformaciones previas. Igual a **`.setTransform(1, 0, 0, 1, 0, 0)`**. |
+| **`.scale()`** | Escala según los factores proporcionados. |
+| **`.translate()`** | Desplaza a un nuevo punto definido por **`(x, y)`**. |
+| **`.rotate()`** | Rota en torno a su origen actual (ángulo en radianes). |
+| **`.clip()`** | Recorta una región particular del lienzo. |
+
+> Los métodos de transformación funcionan de forma muy similar a las transformaciones de CSS. Ten cuidado al utilizarlos, ya que actuan sobre todo el lienzo.
+> 
+
+# [**Animaciones con <canvas>**](https://lenguajejs.com/javascript/canvas/bucle-animaciones/)
+
+## **El bucle de animación y requestAnimationFrame**
+
+ vimos los primeros pasos al utilizar el elemento **`<canvas>`** y como dibujar formas básicas en él. Esto está bien como primera aproximación, pero generalmente, queremos crear animaciones o minijuegos, por lo que necesitamos preparar lo que se llama **el bucle de juego** o **el bucle de animación**.
+
+# [**El bucle de animación**](https://lenguajejs.com/javascript/canvas/bucle-animaciones/#el-bucle-de-animaci%C3%B3n)
+
+Este bucle es una función que se ejecuta continuamente en un intervalo de tiempo. Este intervalo de tiempo se llama **frecuencia de actualización** o **FPS** (***Frames per second***). Por ejemplo, si queremos que la animación se mueva a una velocidad de **`60fps`**, entonces se debe ejecutar cada **`1/60`**.
+
+El código creará un círculo relleno de color rosa que rebotará verticalmente en pantalla. Ten en cuenta que para generar una animación, se suele tener una **estructura general** donde realizamos varias tareas. Esta sería una buena primera aproximación:
+
+- 1️⃣ Fuera del bucle, **inicialización** (tareas iniciales que sólo se ejecutan una vez)
+- 2️⃣ Dentro del bucle, **actualización** (tareas de lógica, cálculo de datos)
+- 3️⃣ Dentro del bucle, **renderización** (tareas de dibujado y pintado)
+- 4️⃣ Dentro del bucle, **reiniciar bucle** (decidir si continuar bucle o parar)
+
+Una primera buena práctica es diferenciar el código que pinta del código que actualiza los datos de la animación o juego. Veamos una primera implementación definiendo estos 4 grupos:
+
+En este fragmento de código, establecemos las coordenadas **`x`** e **`y`** donde estará el círculo. Las variables **`dx`** y **`dy`** definen la velocidad con la que avanza en cada eje y **`radius`** es el radio del círculo. Además, establecemos la velocidad de actualización del bucle en **`FPS`**:
+
+```jsx
+let x = 100, y = 100, dx = 2, dy = 2, radius = 25;
+const FPS = 1000 / 60;
+```
+
+En este fragmento de código simplemente actualizamos la coordenada **`y`** (***eje vertical***) aumentándolo en la velocidad **`dy`**. También comprobamos si se ha llegado al límite inferior o superior, en cuyo caso, invertimos el signo de la velocidad:
+
+```jsx
+y += dy
+if (y + radius > canvas.height || y - radius < 0) dy *= -1;
+```
+
+Por último, en esta parte realizamos las tareas de pintado en el canvas. Borramos el lienzo con **`clearRect()`** en cada fotograma para evitar que se acumulen, creamos un trayecto y dibujamos el círculo relleno:
+
+```jsx
+ctx.clearRect(0, 0, canvas.width, canvas.height);
+ctx.beginPath();
+ctx.arc(x, y, radius, 0, Math.PI * 2);
+ctx.fillStyle = "deeppink";
+ctx.fill();
+ctx.closePath();
+```
+
+Sin embargo, aunque podemos ver la estructura general, el código es muy caótico si lo colocamos secuencialmente, por lo que convendría organizarlo un poco, así que vamos a ello:
+
+- 1️⃣ Fuera de **`gameLoop()`**, **inicialización** (coordenadas, FPS, radio del círculo, etc...)
+- 2️⃣ Dentro de **`update()`**, **actualización** (mover el círculo y comprobar si ha llegado a un límite)
+- 3️⃣ Dentro de **`draw()`**, **renderización** (borrar lienzo y dibujar posición del círculo)
+- 4️⃣ Dentro de **`gameLoop()`**, **reiniciar bucle** (simplemente, volver a ejecutar el bucle)
+
+Utilizando las secciones que mencionamos anteriormente, vamos a organizarlo en funciones:
+
+```jsx
+  const canvas = document.querySelector("canvas");
+  const ctx = canvas.getContext("2d");
+  canvas.width = 200;
+  canvas.height = 200;
+
+  // Inicialización
+  let y = 100, dy = 2;
+  const x = 100, dx = 2, radius = 25;
+  const FPS = 1000 / 60;
+
+  // Actualización de lógica
+  const update = () => {
+    y += dy
+    if (y + radius > canvas.height || y - radius < 0) dy *= -1;
+  }
+
+  // Renderizado y pintado
+  const draw = () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
+    ctx.fillStyle = "deeppink";
+    ctx.fill();
+    ctx.closePath();
+  }
+
+  // Bucle del juego (update, draw, reinicio)
+  function gameLoop() {
+    update();
+    draw();
+    setTimeout(gameLoop, FPS);
+  }
+
+  gameLoop();
+```
+
+Observa que en este ejemplo el bucle **`gameLoop`** es un bucle infinito que nunca para (***hasta que se cierre el navegador***). Si queremos que en algún momento pare la animación, tendríamos que establecer una condición para que en un caso concreto, no se ejecute más el **`gameLoop`**.
+
+# [**Mejorando con `requestAnimationFrame()`**](https://lenguajejs.com/javascript/canvas/bucle-animaciones/#mejorando-con-requestanimationframe)
+
+En el ejemplo anterior, utilizamos la función **`setTimeout()`** que programa la ejecución de una función tras un tiempo concreto. Aunque funciona correctamente, el uso de **`setTimeout()`** puede acarrearnos ciertos problemas en casos especificos, como que no se sincronice correctamente con el monitor (***ejecuta la animación más rápido o más lento y pierde fotogramas o se desincroniza***), no suspende la animación si la pestaña del navegador no está activa (***uso innecesario de recursos***), etc.
+
+| **Característica** | **`setInterval()` / `setTimeout()`** | **`requestAnimationFrame()`** |
+| --- | --- | --- |
+| Sincronización con el monitor | ❌ No sincronizado | ✅ Sincronizado |
+| Eficiencia en segundo plano | ❌ Sigue ejecutándose | ✅ Se pausa automáticamente |
+| Precisión temporal | ❌ Puede variar | ✅ Alta precisión |
+| Uso del tiempo | ❌ No optimizado | ✅ Optimizado por el navegador |
+| Flexibilidad de FPS | Manual | Automático |
+
+Para evitar estos problemas vamos a utilizar **`requestAnimationFrame()`**, que lo gestiona todo mejor:
+
+```jsx
+  const canvas = document.querySelector("canvas");
+  const ctx = canvas.getContext("2d");
+  canvas.width = 200;
+  canvas.height = 200;
+
+  // Inicialización
+  let y = 100, dy = 2;
+  const x = 100, dx = 2, radius = 25;
+
+  // Actualización de lógica
+  const update = () => {
+    y += dy
+    if (y + radius > canvas.height || y - radius < 0) dy *= -1;
+  }
+
+  // Renderizado y pintado
+  const draw = () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
+    ctx.fillStyle = "deeppink";
+    ctx.fill();
+    ctx.closePath();
+  }
+
+  // Bucle del juego (update, draw, reinicio)
+  function gameLoop() {
+    update();
+    draw();
+    requestAnimationFrame(gameLoop);
+  }
+
+  gameLoop();
+```
+
+Comprobarás que ahora, no tenemos que definir los **`FPS`**, y la animación va automáticamente más fluida. Si queremos cambiar la velocidad del elemento, tendríamos que cambiar la lógica de nuestra animación, en nuestro caso el valor de **`dy`**.
+
+# [**Imágenes con <canvas>**](https://lenguajejs.com/javascript/canvas/imagenes/)
+
+## **Trabajando con imágenes en elementos canvas**
+
+Uno de los detalles más interesantes de trabajar con **`<canvas>`** es que puedes dibujar imágenes en el lienzo, utilizando la potencia de Javascript para realizar cualquier tarea adicional.
+
+Para ello, utilizaremos el método **`.drawImage()`** que podemos utilizarlo de varias formas diferentes:
+
+| **Método** | **Descripción** |
+| --- | --- |
+| **`ctx.drawImage(image, x, y)`** | Dibuja la imagen en las coordenadas **`x,y`**. |
+| **`ctx.drawImage(image, x, y, w, h)`** | Dibuja la imagen en **`x,y`** con tamaño **`WxH`**. |
+| **`ctx.drawImage(image, frame_x, frame_y, frame_w, frame_h, x, y, w, h)`** | Dibuja un frame concreto en el lienzo. |
+
+Además, ten en cuenta que en **`image`** podemos indicar varios tipos de elementos, no solo imágenes:
+
+| **Tipo de imagen** | **Descripción** |
+| --- | --- |
+| **`HTMLImageElement`** | Una elemento **`<img>`** de HTML con una imagen en formatos como **`jpg`**, **`png`**, **`webp`**, **`avif`**, **`gif`**... |
+| **`SVGImageElement`** | Una elemento **`<svg>`** de HTML con una imagen vectorial. |
+| **`HTMLVideoElement`** | Un elemento **`<video>`** de HTML con un video en formatos como **`mp4`**, **`webm`**... |
+| **`HTMLCanvasElement`** | Otro elemento **`<canvas>`** de HTML utilizado como "fuente". |
+| **`ImageBitmap`** | Una imagen de mapa de bits, normalmente creada para trabajar sin latencia. |
+| **`OffscreenCanvas`** | Un elemento **`<canvas>`** que no está atado al DOM y puede estar fuera de pantalla. |
+| **`VideoFrame`** | Un fotograma de un video específico. |
+
+Primero, vamos a centrarnos en las dos primeras trabajando con una imagen simple, ya que son las más sencillas. Luego, trabajaremos con un spritesheet (***imagen con varios frames***) y utilizaremos la última.
+
+> Un fallo muy común al dibujar imágenes en canvas es pensar que la imagen está cargada inmediatamente. Esa tarea depende de la conexión, por lo que hay que esperar a que esté cargada. Para evitarlo, escucharemos un evento load para asegurarnos.
+> 
+
+Observa que en nuestro caso concreto estamos usando imágenes **pixel art**. Hemos desactivado **`imageSmoothingEnabled`** para que no suavice la imagen al ampliarla, ya que en las imágenes pixel art no se usa ese suavizado.
+
+# [**Exportación desde un <canvas>**](https://lenguajejs.com/javascript/canvas/exportar/)
+
+## **Guardar el contenido de un canvas**
+
+Imaginemos que tenemos la necesidad de exportar en algún tipo de formato multimedia el contenido que tenemos en nuestro elemento **`<canvas>`**.
+
+# [**Exportar un canvas**](https://lenguajejs.com/javascript/canvas/exportar/#exportar-un-canvas)
+
+Nuestro elemento **`<canvas>`** tiene tres métodos interesantes para exportar su contenido:
+
+| **Método** | **Descripción** |
+| --- | --- |
+| **`.toDataURL(type, quality)`** | Convierte el lienzo en una imagen formato **`type`** representada como  Data URI. |
+| **`.toBlob(fn, type, quality)`** | Convierte el lienzo en un BLOB (Binary Large Object) para manipulación eficiente. |
+| **`.captureStream()`** | Permite capturar el contenido del lienzo como un stream de datos, convertible a video. |
+
+Vamos a ver varios ejemplos donde utilizaremos cada uno de ellos.
+
+Mediante el método **`.toDataURL()`** podemos convertir la imagen que se ve en el lienzo en una imagen de tipo Data URI, es decir, una cadena de texto (***generalmente, muy grande***) que contiene la información de la imagen, y que se puede mostrar al colocarla como URL.
+
+En este ejemplo, guardamos dicho  en **`dataURL`** lo añadimos al atributo **`src`** de una **`<img>`** HTML. Con ello, es suficiente para mostrar la imagen:
+
+```jsx
+  const canvas = document.querySelector("canvas");
+  const ctx = canvas.getContext("2d");
+  canvas.width = 200;
+  canvas.height = 200;
+  canvas.style.background = "#ccc";
+
+  ctx.fillStyle = "blue";
+  ctx.fillRect(50, 50, 100, 100);
+
+  // Convierte el lienzo a Data URI en formato PNG
+  const dataURL = canvas.toDataURL("image/png", 1.0);
+  const img = document.createElement("img");
+  img.src = dataURL;
+  document.body.append(img);
+```
+
+Una forma alternativa de guardar la imagen del canvas, es utilizando el método **`.toBlob()`**. Este método convierte la información del canvas en un BLOB (***Binary Large Object***), que es un formato que permite almacenar grandes cantidades inmutables de datos binarios.
+
+Una de las características importantes de estos BLOB es que son ideales para trabajar con grandes cantidades de datos, ya que se manipulan como referencias a memoria, en lugar de como cadenas de texto.
+
+```jsx
+  const canvas = document.querySelector("canvas");
+  const ctx = canvas.getContext("2d");
+  canvas.width = 200;
+  canvas.height = 200;
+  canvas.style.background = "#ccc";
+
+  ctx.fillStyle = "blue";
+  ctx.fillRect(50, 50, 100, 100);
+
+  // Convierte el lienzo en un BLOB y permite descargarlo mediante un enlace
+  canvas.toBlob((blob) => {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    console.log({ blob, url: a.href })
+    a.download = "canvas-image.png";
+    a.textContent = "Descargar";
+    document.body.append(a);
+  }, "image/png", 1.0);
+```
+
+Por último, también podemos crear un video a partir de una animación de un elemento canvas. Para ello, vamos a utilizar el método **`.captureStream()`**, que permite ir capturando los fotogramas del canvas, para crear un video. Vamos a explicar los detalles clave que hemos hecho:
+
+- 1️⃣ En el canvas, se muestra un cuadrado que va cambiando de color de forma aleatoria.
+- 2️⃣ Si pulsamos en el botón **`Record`** comenzamos a capturar los datos del canvas y guardándolos.
+- 3️⃣ En **`recordedChunks`** vamos guardando los datos capturados en cuanto hay disponibles.
+- 4️⃣ Con el **`MediaRecorder`** establecemos un mecanismo para grabar en video.
+- 5️⃣ Si pulsamos en el botón **`Stop record`**, paramos la grabación y activamos un enlace de descarga.
+- 6️⃣ Al pulsar en ese enlace, el se descarga el video en formato MP4.
+
+Echemos un vistazo a dicho código:
+
+```html
+<canvas></canvas><button class="record">Record</button><a class="download"></a><script>
+  const recordButton = document.querySelector(".record");
+  const downloadLink = document.querySelector(".download");
+  const canvas = document.querySelector("canvas");
+  const ctx = canvas.getContext("2d");
+  canvas.width = 200;
+  canvas.height = 200;
+  canvas.style.background = "#ccc";
+
+  ctx.fillStyle = "red";
+  ctx.fillRect(50, 50, 100, 100);
+
+  // Dibuja un cuadrado de un color aleatorio cada 0.5seg
+  setInterval(() => {
+    const r = Math.random() * 255;
+    const g = Math.random() * 255;
+    const b = Math.random() * 255;
+    ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+    ctx.fillRect(50, 50, 100, 100);
+  }, 500);
+
+  let mediaRecorder;
+  let recordedChunks = [];
+
+  recordButton.addEventListener("click", () => {
+    const stream = canvas.captureStream();
+    const video = document.createElement("video");
+    video.muted = true;
+    video.autoplay = true;
+    video.srcObject = stream;
+
+    if (!mediaRecorder || mediaRecorder.state === "inactive") {
+      recordedChunks = [];
+      mediaRecorder = new MediaRecorder(stream, { mimeType: "video/mp4" });
+
+      mediaRecorder.addEventListener("dataavailable", (event) => {
+        if (event.data.size > 0) {
+          recordedChunks.push(event.data);
+        }
+      });
+
+      mediaRecorder.addEventListener("stop", () => {
+        const blob = new Blob(recordedChunks, { type: "video/mp4" });
+        const url = URL.createObjectURL(blob);
+        downloadLink.href = url;
+        downloadLink.textContent = "Download";
+        downloadLink.download = "canvas-animation.mp4";
+      });
+
+      mediaRecorder.start();
+      recordButton.textContent = "Stop Recording";
+    } else {
+      mediaRecorder.stop();
+      recordButton.textContent = "Start Recording";
+    }
+  });
+</script>
+```
+
+Con estos mecanismos, podemos utilizar un elemento HTML **`<canvas>`** para generar información multimedia, tanto en imagen como en video, permitiéndo descargarlo y guardarlo en nuestro sistema.
+
+# [**URL en Javascript**](https://lenguajejs.com/javascript/peticiones-http/url/)
+
+## **Trabajando con direcciones URL en Javascript**
+
+Normalmente, cuando tenemos que trabajar con una **dirección web** (***URL***) en Javascript, lo más habitual es utilizar un tipo de dato  donde almacenamos dicha **URL**. En la mayoría de los casos, esto suele ser suficiente. Sin embargo, si necesitamos hacer ciertas operaciones con la URL donde tengamos que modificar o acceder a ciertas partes específicas de la URL, se podría complicar un poco.
+
+# [**El objeto URL**](https://lenguajejs.com/javascript/peticiones-http/url/#el-objeto-url)
+
+Si necesitamos acceder a partes específicas de una URL, o incluso modificarlas, tenemos un  de tipo  especial para estos casos, que será mucho más cómodo que trabajar con el  (***y contemplar todos los posibles casos que podrían ocurrir***). Su funcionamiento es el siguiente:
+
+```jsx
+const url = new URL("https://manz.dev/");
+
+url.protocol      // "https:"
+url.hostname      // "manz.dev"
+url.pathname      // "/"
+```
+
+Como puedes ver, se puede ir accediendo a diferentes propiedades del objeto **`url`** que hemos generado a partir del  de la URL para obtener partes específicas de la dirección web.
+
+# [**Partes de una URL**](https://lenguajejs.com/javascript/peticiones-http/url/#partes-de-una-url)
+
+Para explicar como trabajar con **URL** en Javascript, antes necesitamos analizar bien la estructura de una URL y examinar las diferentes partes que la componen, para tener bien claro antes de trabajar con nuestro código Javascript.
+
+![image.png](attachment:76624eef-d2ca-459d-834f-d6d4fb3638c6:image.png)
+
+Vamos a generar dos **objetos**: **`url`** y **`local`**. Los crearemos a partir de dos  con dos URL específicas que pasaremos por parámetro, mediante un **`new URL()`**:
+
+```jsx
+const url = new URL("https://sub.manz.dev/path/page.html#anchor");
+const local = new URL("http://manz:12345@localhost:8000/path/file.mp3");
+```
+
+Un objeto  contiene una serie de propiedades para identificar partes concretas de la URL generada:
+
+| **Propiedad** | **Descripción** | **Ejemplo url** | **Ejemplo local** |
+| --- | --- | --- | --- |
+| **`.protocol`** | Protocolo de comunicación usado. | **`https:`** | **`http:`** |
+| **`.hostname`** | Dominio completo (subdominio + dominio). | **`sub.manz.dev`** | **`localhost`** |
+| **`.host`** | Dominio completo + puerto. | **`sub.manz.dev`** | **`localhost:8000`** |
+| **`.origin`** | Origen (Protocolo + host) | **`https://sub.manz.dev`** | **`http://localhost:8000`** |
+| **`.username`** | Nombre de usuario que ha accedido. | Vacío | **`manz`** |
+| **`.password`** | Contraseña del usuario que ha accedido. | Vacío | **`12345`** |
+| **`.port`** | Puerto en escucha de la web. | Vacío | **`8000`** |
+| **`.pathname`** | Ruta completa (ruta + documento) | **`/path/page.html`** | **`/path/file.mp3`** |
+| **`.hash`** | Ancla (lo explicamos más adelante) | **`#anchor`** | Vacío |
+| **`.href`** | Esta propiedad devuelve la URL completa (query strings incluídas, ver más adelante). |  |  |
+
+Ten en cuenta los siguientes detalles:
+
+- La diferencia entre **`.hostname`** y **`.host`** es que el segundo incluye el **puerto** (***si está definido explícitamente***).
+- El **origen** (**`origin`**) es la unión del protocolo + dominio completo + puerto (***si se indica***).
+
+Teniendo claras las diferentes partes de una **URL**, vamos a ver ahora como podríamos trabajar con ellas y acceder a partes especificas desde nuestro código Javascript.
+
+### [**Protocolo de la URL**](https://lenguajejs.com/javascript/peticiones-http/url/#protocolo-de-la-url)
+
+Normalmente, a una web se accede mediante el protocolo **`http://`**, sin embargo, hoy en día está más extendido el protocolo **`https://`**, que es el mismo pero con una capa de seguridad adicional donde los datos van cifrados (***al contrario que en HTTP***).
+
+### [**Usuario y Contraseña**](https://lenguajejs.com/javascript/peticiones-http/url/#usuario-y-contrase%C3%B1a)
+
+Generalmente, al acceder a una web no se suele proporcionar el usuario y contraseña, pero es posible hacerlo directamente desde la URL. De hacerlo, hay que indicar el usuario después de las **`//`** del protocolo. Si queremos añadir también un password, habría que añadirlo inmediatamente después del usuario, separándolo por **`:`** y, finalmente, después del password, añadir el símbolo **`@`** para separarlo del dominio.
+
+```jsx
+"https://manz.dev/login/"             // Acceso anónimo (sin usuario ni pass)
+"https://manz@manz.dev/login/"        // Acceso como usuario manz (sin pass)
+"https://manz:12345@manz.dev/login/"  // Acceso como usuario manz con pass 12345
+```
+
+> **OJO**: Hoy en día, los nombres de usuario y contraseñas se suelen gestionar más frecuentemente a nivel de aplicación. En este caso hemos explicado como utilizarlos a nivel de servidor.
+> 
+
+### [**Dominio, subdominio y TLD**](https://lenguajejs.com/javascript/peticiones-http/url/#dominio-subdominio-y-tld)
+
+Cuando hablamos de nombre de dominio, muchas veces solemos abarcar todo, es decir, en nuestro ejemplo, **`sub.manz.dev`**. Sin embargo, hay que tener en cuenta que tenemos tres partes:
+
+- **Subdominio**: **`sub`**, una división específica del dominio
+- **Dominio**: **`manz.dev`**, el dominio en cuestión
+- **TLD** (***Top Level Domain***): **`.dev`**, la terminación del dominio
+
+### [**Puerto de la URL**](https://lenguajejs.com/javascript/peticiones-http/url/#puerto-de-la-url)
+
+Cualquier página está alojada en un servidor web y dicho servidor web debe estar continuamente escuchando peticiones para que los usuarios puedan conectarse y acceder a la web. Por norma general, los servidores web escuchan en el puerto **`80`** (HTTP) o en el puerto **`443`** (HTTPS), aunque se puede configurar un puerto diferente.
+
+El **puerto** es un número (***del 1 al 65535***) que se debe indicar precedido del símbolo **`:`**, justo al final del dominio. En el caso de que no se indique explícitamente un número de puerto, se utilizará el puerto por defecto y no mostrará en la URL, que es el caso más habitual.
+
+```jsx
+"https://manz.dev/"       // Se accede por puerto 443 (HTTPS por defecto).
+"https://manz.dev:3000/"  // Se accede por puerto 3000 explícitamente.
+"https://manz.dev:443/"   // Se accede por puerto 443 (es el mismo que el caso 1)
+```
+
+### [**Ruta de la URL**](https://lenguajejs.com/javascript/peticiones-http/url/#ruta-de-la-url)
+
+La **ruta** de una URL es la estructura de carpetas a la que vamos a acceder para descargar la página. Por defecto, si no se le indica una página o documento explícitamente, se suele buscar la página **`index.html`** o **`index.htm`**, aunque depende de la configuración.
+
+```jsx
+"https://manz.dev/streams/"           // Carpeta streams
+"https://manz.dev/software/mkweb/"    // Carpeta mkweb, dentro de la carpeta software
+"https://manz.dev/"                   // Carpeta principal (raíz)
+```
+
+> En frontend, en muchas ocasiones, no tenemos **rutas reales** que equivalen a carpetas, sino que trabajamos con **pseudo-rutas**, una especie de ruta artificial creada para simular las rutas reales.
+> 
+
+### [**Trailing slash (barra final)**](https://lenguajejs.com/javascript/peticiones-http/url/#trailing-slash-barra-final)
+
+Observa que cuando indicamos una URL que termina en una ruta (***sin indicar página o documento***), muchas veces te encontrarás una **`/`** al final y otras veces no. Esta **`/`** se denomina **trailing slash**. Puede parecer la misma página, pero mucho cuidado, ya que en algunos casos pueden ser URL diferentes:
+
+```jsx
+"https://manz.dev/streams/"         // Estamos accediendo a una carpeta llamada "streams"
+"https://manz.dev/streams"          // Estamos accediendo a un fichero sin extensión llamado "streams"
+```
+
+En el primer caso no hay duda, se accede a la carpeta **`streams/`**. Sin embargo, en el segundo caso, si **`streams`** es una carpeta, lo que ocurrirá es que redireccionará a **`streams/`**, lo que hará que busque **`streams/index.html`**. Pero si en lugar de una carpeta, **`streams`** es un archivo (***sin extensión***), estaríamos accediendo a ese documento.
+
+# [**Qué es un automatizador?**](https://lenguajejs.com/javascript/automatizadores/introduccion/)
+
+## **Empaquetadores Javascript para automatizar tareas**
+
+Antiguamente, cuando teníamos que crear un nuevo sitio web, debíamos crear manualmente una **carpeta para el proyecto**, las diferentes subcarpetas de las secciones de la web (***imágenes, css, js, etc...***), configurar un servidor web (***se solía usar XAMPP o similares***), colocar y enlazar las diferentes librerías CSS y/o Javascript que queríamos utilizar, etc...
+
+Aunque eso todavía se puede hacer hoy en día, los automatizadores nos ayudan a simplificar este proceso con el que podemos gastar mucho tiempo realizando **transpilaciones**.
+
+# [**¿Qué es transpilar?**](https://lenguajejs.com/javascript/automatizadores/introduccion/#qu%C3%A9-es-transpilar)
+
+Una transpilación es la tarea de transformar el código fuente de un lenguaje a otro código fuente diferente. En nuestro caso, los **automatizadores** leen nuestro código Javascript y lo modifican, realizando cambios para que no tengamos que hacerlo nosotros manualmente y sea mucho más cómodo utilizarlo.
+
+Con la evolución del desarrollo web, hemos pasado a trabajar **transpilando código**. Habitualmente, trabajamos en una carpeta **`src/`** donde tenemos nuestro código fuente. Ese código se preprocesa y se traduce a otro código (***en la carpeta `dist/`***) que es el código que finalmente leerá nuestro navegador. Mantener actualizado el código fuente que escribimos con el que lee el navegador sin automatizarlo, es una tarea muy tediosa. De ahí surgen los **automatizadores**.
+
+# [**¿Por qué transpilar?**](https://lenguajejs.com/javascript/automatizadores/introduccion/#por-qu%C3%A9-transpilar)
+
+Actualmente, en el ecosistema **Javascript** (***o en el mundo del desarrollo web en general***), es muy común utilizar estos **automatizadores** para, entre otras cosas, agilizar el proceso de creación de una aplicación web con unos pocos comandos, realizando de forma automática todas esas tareas tediosas y repetitivas, alcanzando nuestro objetivo de forma más rápida y con una mejor experiencia de desarrollador.
+
+Algunas de esas tareas podrían ser las siguientes:
+
+- 1️⃣ Creación del **proyecto** y su gestión (***generalmente, con [NPM](https://lenguajejs.com/npm/)***)
+- 2️⃣ Actualización y mantenimiento de **dependencias** (***generalmente, con [NPM](https://lenguajejs.com/npm/)***)
+- 3️⃣ **Servidor web local** de desarrollo
+- 4️⃣ **Minificación** de código
+- 5️⃣ **Optimización** de imágenes
+- 6️⃣ **Preprocesar** o transpilar código fuente
+- 7️⃣ **Despliegue** o subida del código final al servidor
+
+Todas estas tareas pueden ser realizadas de forma manual, pero con el uso de un automatizador, lo hacemos automáticamente, de forma más rápida y, muy probablemente, con menos errores.
+
+> Hoy en día, los automatizadores más populares son **Vite** y **Webpack**. Si estás comenzando un desarrollo te recomiendo encarecidamente que pruebes [Vite](https://lenguajejs.com/javascript/automatizadores/vite/), ya que es el más rápido y moderno, y el que tiene más futuro.
+> 
+
+# [**Tutorial inicial de Vite**](https://lenguajejs.com/javascript/automatizadores/vite/)
+
+## **Primeros pasos para utilizar el empaquetador ViteJS**
+
+**Vite** se define como una herramienta de frontend que te ayudará a crear tus proyectos de forma agnóstica (***sin atarte a ningún framework concreto***) y que su desarrollo y construcción final sea lo más sencilla y cómoda posible. Está desarrollada por **Evan You**, el creador de [Vue](https://lenguajejs.com/vuejs/).
+
+Actualmente, **Vite** soporta la creación tanto de proyectos vanilla (***sin utilizar frameworks***), como proyectos utilizando **Vue**, **React**, **Preact**, **Svelte** o **Lit** (***tanto usando Javascript como Typescript***).
+
+# [**Crear un proyecto con Vite**](https://lenguajejs.com/javascript/automatizadores/vite/#crear-un-proyecto-con-vite)
+
+Para comenzar, simplemente necesitamos tener instalado **NodeJS**. Utilizaremos **`npm`** para comenzar el proyecto. Escribimos desde una terminal:
+
+```bash
+$ npm create vite demo-project
+
+Need to install the following packages:
+  create-vite
+Ok to proceed? (y) y
+```
+
+El comando **`npm create vite`** hará toda la magia por nosotros. En nuestro ejemplo, **`demo-project`** sería el nombre de la carpeta del proyecto, por lo que este comando ya se encargará de crear la carpeta, ni siquiera tendremos que crearla nosotros.
+
+Se nos advertirá que es necesario instalar el paquete **`create-vite`** de no tenerlo instalado, que es el asistente encargado de crear la aplicación web. Al responder afirmativamente, nos aparecerá un menú para seleccionar que plantilla queremos utilizar (***al elegir una, luego nos preguntará si queremos la versión javascript o typescript***).
+
+# [**Plantillas de Vite**](https://lenguajejs.com/javascript/automatizadores/vite/#plantillas-de-vite)
+
+Si no queremos que nos aparezca ese menú interactivo, es posible indicar un parámetro opcional **`--template`** para especificar directamente la plantilla a utilizar sin que nos salte el asistente:
+
+```bash
+$ npm create vite demo-project -- --template vanilla
+```
+
+Las plantillas que tenemos disponibles en **`Vite`** son las siguientes (***son las que se establecen al elegir las opciones en el menú***):
+
+| **Plantilla** | **Descripción** | **URL** |
+| --- | --- | --- |
+| **`vanilla`** | Proyecto vanilla, sin frameworks. Versión Javascript y Typescript. | [vanilla](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-vanilla) [vanilla-ts](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-vanilla-ts) |
+| **`vue`** | Proyecto con el framework Vue. Versión Javascript y Typescript. | [vue](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-vue) [vue-ts](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-vue-ts) |
+| **`react`** | Proyecto con la librería React. Versión Javascript y Typescript. | [react](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react) [react-ts](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) |
+| **`preact`** | Proyecto con la librería Preact. Versión Javascript y Typescript. | [preact](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-preact) [preact-ts](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-preact-ts) |
+| **`lit`** | Proyecto con la librería Lit. Versión Javascript y Typescript. | [lit](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-lit) [lit-ts](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-lit-ts) |
+| **`svelte`** | Proyecto con la librería Svelte. Versión Javascript y Typescript. | [svelte](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-svelte) [svelte-ts](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-svelte-ts) |
+
+Una vez hecho el proceso, comprobaremos que la tarea de creación del proyecto es prácticamente instantánea. Esto ocurre así porque **Vite** no realiza el proceso de instalación de paquetes automáticamente, por lo que tendremos que hacerlos nosotros manualmente de forma posterior:
+
+```bash
+$ cd demo-project
+$ npm install
+```
+
+Con esto ya tendremos el proyecto listo para arrancarlo con el script **`npm run dev`** y comenzar a desarrollar. Ten en cuenta que en todos los proyectos que generes tendrás un script **`dev`** que lanza el **modo de desarrollo de Vite** y, por otro lado, tendrás un script **`build`** que lanza el **modo de producción de Vite**, que es el que genera la subida en la carpeta **`dist`**, que es la que irá a producción.
+
+# [**El fichero vite.config.js**](https://lenguajejs.com/javascript/automatizadores/vite/#el-fichero-viteconfigjs)
+
+En los proyectos de **Vite** encontrarás un fichero **`vite.config.js`**. Se trata de un fichero de configuración donde puedes establecer algunos detalles del funcionamiento del empaquetador en el proyecto actual. La estructura general de este fichero es la siguiente:
+
+```jsx
+import { defineConfig } from "vite";
+
+export default defineConfig({
+  root: "./",
+  base: "/",
+  publicDir: "public",
+  build: {
+    outDir: "dist",
+    assetsDir: "assets"
+  },
+  plugins: []
+});
+```
+
+Dependiendo de la plantilla utilizada, este fichero de configuración puede ser diferente o incluso no existir (***como es en el caso de los proyectos de Javascript vanilla***).
+
+# [**Temporizadores**](https://lenguajejs.com/javascript/web-apis/temporizadores/)
+
+Los **temporizadores** (***timers***) son funciones especiales que permiten ejecutar una función que realice ciertas tareas después de un determinado tiempo. Por un lado, los temporizadores **timeout** ejecutan cuando pasa un cierto tiempo, mientras que los temporizadores **interval** se ejecutan constantemente cada cierto tiempo.
+
+# [**La función `setTimeout()`**](https://lenguajejs.com/javascript/web-apis/temporizadores/#la-funci%C3%B3n-settimeout)
+
+La función **`setTimeout(f, ms)`** nos pide dos parámetros: la  función **`f`** a ejecutar y el  tiempo **`ms`** que debemos esperar antes de que se ejecute (***en milisegundos***).
+
+```jsx
+console.log("Ejecución 1");
+
+function action() {
+  console.log("Ejecución 2");
+}
+
+setTimeout(action, 5000);
+```
+
+Si ejecutas este fragmento de código, comprobarás que aparece el mensaje **`Ejecución 1`** y a los **5 segundos** aparecerá **`Ejecución 2`**. Observa que hemos declarado la función **`action()`** antes de ejecutar el **`setTimeout()`**, al cuál se lo pasamos por parámetro.
+
+ como una [función flecha](https://lenguajejs.com/javascript/introduccion/funciones/#arrow-functions) es mucho más cómodo a la hora de escribirla, ya que nos ahorramos líneas y se puede escribir de forma más compacta:
+
+```jsx
+console.log("Ejecución 1");
+
+setTimeout(() => console.log("Ejecución 2"), 5000);
+```
+
+> Ten en cuenta que los navegadores poseen múltiples excepciones (incluso particulares, por cada navegador), por las que el temporizador podría no ser preciso en favor de no sacrificar el rendimiento del navegador.
+> 
+
+# [**La función `setInterval()`**](https://lenguajejs.com/javascript/web-apis/temporizadores/#la-funci%C3%B3n-setinterval)
+
+Como puedes ver, **`setTimeout()`** no es el único temporizador. La función **`setInterval()`** ejecuta una función **cada cierto tiempo**. Como vimos anteriormente, **`setTimeout()`** espera el número indicado de segundos para ejecutar la función proporcionada por parámetro, y una vez ejecutada termina el temporizador.
+
+Por otro lado, la función **`setInterval()`** espera el número indicado de segundos y ejecuta la función proporcionada, una vez hecho, vuelve a repetir el proceso una y otra vez:
+
+```jsx
+setInterval(() => console.log("Bart y Lisa: Papá, ¿hemos llegado ya?"), 3000);
+```
+
+Como puedes ver, esta función se ejecutará cada 3 segundos, continuamente.
+
+> Ten mucho cuidado al colocar temporizadores dentro de un setInterval(). En el caso de incluir un setTimeout() podría no ser grave, pero en el caso de añadir un setInterval() dentro de otro, podrías provocar una bomba fork.
+> 
+
+La **bomba fork** (o **fork bomb**) es un tipo de ataque de denegación de servicio (DoS) que explota la capacidad de un sistema operativo para crear nuevos procesos. Consiste en un programa que se replica a sí mismo indefinidamente, consumiendo rápidamente los recursos del sistema (CPU, RAM y procesos disponibles) hasta que la computadora se vuelve inusable o se bloquea.
+
+# [**Detener temporizadores**](https://lenguajejs.com/javascript/web-apis/temporizadores/#detener-temporizadores)
+
+Aunque no lo hemos mencionado anteriormente, tanto el temporizadores **`setTimeout()`** como **`setInterval()`** devuelven un  número al ejecutarse. Este número es un identificador único del temporizador. Es útil cuando queremos detener prematuramente el temporizador y cancelar inmediatamente la ejecución del mismo.
+
+Por ejemplo, observa este ejemplo de **`clearTimeout()`** en un temporizador **`setTimeout()`**:
+
+```jsx
+console.log("Inicio del código");
+
+const id = setTimeout(() => console.log("EJECUTADO!"), 5000);
+clearTimeout(id);
+```
+
+En este caso, el **`console.log()`** de **`EJECUTADO!`** nunca será mostrado por consola, ya que al programarlo para **dentro de 5 segundos**, inmediatamente después es cancelado con la función **`clearTimeout()`**, a la cuál le proporcionamos el identificador que guardamos en **`id`** en la línea anterior.
+
+Ocurre exactamente igual en el caso del **`setInterval()`**:
+
+```jsx
+console.log("Inicio del código");
+
+const id = setInterval(() => console.log("Mensaje que saldrá cada segundo"), 1000);
+```
+
+Una vez se ejecute este fragmento de código, veremos que se muestra en consola varios mensajes por cada segundo. Una vez ejecutemos la línea de código **`clearInterval(id)`**, ese temporizador se detendrá, y por lo tanto, no se verá más el mensaje.
+
+# [**Usando `requestAnimationFrame()`**](https://lenguajejs.com/javascript/web-apis/temporizadores/#usando-requestanimationframe)
+
+En temáticas de desarrollo de juegos, o a la hora de mostrar animaciones, muchas veces es necesario crear un bucle **`loop`**, que se vaya llamando continuamente y mostrando los cambios de la animación, personaje o elementos del videojuego, por ejemplo. Para ello, hay que llamar al bucle un número específico de veces cada cierto tiempo.
+
+Si lo llamamos muy pocas veces, la animación será lenta o irá a golpes, si la llamamos demasiadas veces, estaremos trabajando de más y podríamos tener un problema de rendimiento.
+
+> Se suele decir que el número de frames apropiado por segundo es 60, es decir, 1000 / 60, o lo que es lo mismo, aproximadamente 16 ms. Esto hace que la animación sea fluida y se vea correctamente.
+> 
+
+Esto traducido a **`setTimeout()`** sería lo siguiente:
+
+js
+
+```jsx
+const FPS = 1000 / 16;
+
+const loop = () => {
+  console.log("Tick... Tack...");
+  setTimeout(loop, FPS);
+}
+
+setTimeout(loop, FPS);
+```
+
+Sin embargo, tenemos una alternativa a **`setTimeout()`** especialmente orientada a animaciones, denominada **`requestAnimationFrame()`**. Observa que funciona de forma muy parecida, sólo que no es necesario indicarle el número de FPS, ya que lo calcula automáticamente.
+
+Esto es una de las ventajas de esta función respecto a **`setTimeout()`**. La cantidad de FPS no siempre debe ser constante, sino que en algunos momentos del bucle puede variar y necesitar más o menos cantidad. Por lo tanto, en el caso del **`setTimeout()`** tendríamos que estar cambiando ese valor, y no resulta práctico.
+
+Sin embargo, **`requestAnimationFrame()`** lo calcula por si mismo, y sólo vuelve a ejecutar el bucle cuando es el momento oportuno. Esto hace que las animaciones sean muy fluidas y no se utilice tiempo extra o insuficiente, mientras que el programador no debe preocuparse de realizar los cálculos:
+
+```jsx
+const loop = () => {
+  console.log("Tick... Tack...");
+  requestAnimationFrame(loop);
+}
+
+requestAnimationFrame(loop);
+```
+
+Una forma de comprobar la utilidad de este **`requestAnimationFrame()`** sobre el tradicional **`setTimeout()`** es si ejecutamos el bucle y cambiamos a otra pestaña. En el caso de **`setTimeout()`** el bucle se seguirá ejecutando aunque tengamos la página minimizada y no estemos viendo nada, lo que probablemente estaría desperdiciando recursos, batería, etc..
+
+Por otro lado, en el caso de **`requestAnimationFrame()`** se podrá comprobar que el **`console.log()`** se detiene, y sólo se ejecuta cuando el usuario tiene la pestaña o ventana activa y la está mostrando.
+
+> Desde hace algunas versiones (2021), los navegadores han establecido un sistema de control para los temporizadores y pueden estar limitados si el navegador lo consideran oportuno. [ Más info ]
+> 
+
+De la misma forma que **`setTimeout()`** y **`setInterval()`**, esta función tiene su propia función para cancelar el temporizador optimizado, que se denomina **`cancelAnimationFrame()`**. De la misma forma, también se le tiene que pasar el **`id`** que devuelve **`requestAnimationFrame()`**.
